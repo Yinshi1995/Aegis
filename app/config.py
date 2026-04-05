@@ -8,9 +8,10 @@ from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
 
-# Загружаем .env из корня проекта (override=True → .env главнее системных переменных)
+# Загружаем .env из корня проекта.
+# override=False → системные переменные (Railway, Docker) приоритетнее .env
 _project_root = Path(__file__).parent.parent
-load_dotenv(_project_root / ".env", override=True)
+load_dotenv(_project_root / ".env", override=False)
 
 
 def _env(key: str, default: str = "") -> str:
@@ -72,7 +73,7 @@ class AppConfig:
     project_root: Path = field(default_factory=lambda: _project_root)
     knowledge_base_dir: str = field(default_factory=lambda: _env("KNOWLEDGE_BASE_DIR", "./knowledge_base"))
     gui_host: str = field(default_factory=lambda: _env("GUI_HOST", "0.0.0.0"))
-    gui_port: int = field(default_factory=lambda: _env_int("GUI_PORT", 7860))
+    gui_port: int = field(default_factory=lambda: _env_int("PORT", 0) or _env_int("GUI_PORT", 7860))
     debug: bool = field(default_factory=lambda: _env_bool("DEBUG", True))
 
     ollama: OllamaConfig = field(default_factory=OllamaConfig)

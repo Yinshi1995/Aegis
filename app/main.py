@@ -9,13 +9,18 @@ import sys
 # Логування
 # ---------------------------------------------------------------------------
 
+_handlers = [logging.StreamHandler(sys.stdout)]
+try:
+    from pathlib import Path as _P
+    _P("data").mkdir(exist_ok=True)
+    _handlers.append(logging.FileHandler("data/agent.log", encoding="utf-8"))
+except OSError:
+    pass
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler("data/agent.log", encoding="utf-8"),
-    ],
+    handlers=_handlers,
 )
 logger = logging.getLogger(__name__)
 
@@ -24,7 +29,7 @@ def main():
     """Головна функція запуску."""
     from pathlib import Path
 
-    # Створюємо data/ якщо не існує
+    # data/ вже створено в logging setup
     Path("data").mkdir(exist_ok=True)
 
     logger.info("=" * 60)
