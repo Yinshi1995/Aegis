@@ -1,0 +1,31 @@
+# Core
+fastapi>=0.110.0
+uvicorn>=0.27.0
+sqlalchemy>=2.0.0
+
+# GUI
+gradio>=4.20.0
+
+# LLM
+ollama>=0.3.0
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-core>=0.2.0
+
+# RAG
+chromadb>=0.4.24
+sentence-transformers>=2.5.0
+pymupdf>=1.24.0
+
+# Embeddings (если не через Ollama)
+# huggingface-hub>=0.20.0
+
+# Tools
+playwright>=1.42.0
+# selenium>=4.18.0   # fallback
+
+# Utils
+python-dotenv>=1.0.0
+pydantic>=2.6.0
+httpx>=0.27.0
+rich>=13.7.0          # красивые логи
