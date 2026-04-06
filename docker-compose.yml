@@ -1,0 +1,61 @@
+# ============================================================
+# ProjectAegis — Docker Compose (dev / deploy)
+# ============================================================
+# llamacpp (дефолт): docker compose up -d --build
+# С Ollama:          docker compose --profile ollama up -d
+# ============================================================
+
+services:
+  # --- PostgreSQL + pgvector ---
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aegis
+      POSTGRES_USER: aegis
+      POSTGRES_PASSWORD: aegis_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis -d aegis"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # --- Ollama LLM (опционально, профиль: ollama) ---
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  # --- Aegis Agent ---
+  aegis:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "7860:7860"
+    environment:
+      LLM_BACKEND: llamacpp
+      LLAMACPP_MODEL_PATH: ./models/qwen2.5-7b-instruct-q4_k_m.gguf
+      LLAMACPP_EMBED_MODEL_PATH: ./models/nomic-embed-text-v1.5.Q8_0.gguf
+      LLAMACPP_N_GPU_LAYERS: "0"
+      LLAMACPP_N_CTX: "4096"
+      LLAMACPP_CHAT_FORMAT: chatml
+      DATABASE_TYPE: postgres
+      DATABASE_URL: postgresql://aegis:aegis_secret@postgres:5432/aegis
+      VECTOR_STORE_TYPE: pgvector
+      GUI_HOST: "0.0.0.0"
+      GUI_PORT: "7860"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  ollama_data:

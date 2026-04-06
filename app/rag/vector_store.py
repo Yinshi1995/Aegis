@@ -1,6 +1,6 @@
 """
-Операции с ChromaDB — хранение и поиск по векторам.
-Persist в ./data/chroma_db.
+Операции с векторным стором — ChromaDB (дефолт) или pgvector.
+Фабрика get_vector_store() возвращает нужную реализацию по конфигу.
 """
 import logging
 from pathlib import Path
@@ -11,6 +11,14 @@ from app.rag.pdf_loader import Chunk
 from app.rag.embeddings import get_embedding, get_embeddings_batch
 
 logger = logging.getLogger(__name__)
+
+
+def get_vector_store():
+    """Фабрика: возвращает ChromaVectorStore или PgVectorStore в зависимости от VECTOR_STORE_TYPE."""
+    if config.database.vector_store_type == "pgvector":
+        from app.rag.vector_store_pgvector import PgVectorStore
+        return PgVectorStore()
+    return VectorStore()
 
 
 class VectorStore:

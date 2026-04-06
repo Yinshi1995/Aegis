@@ -81,26 +81,30 @@ table tbody tr:nth-child(even) { background: rgba(0,0,0,.03); }
 
 def _check_ollama_status() -> str:
     try:
-        from app.llm.ollama_client import OllamaClient
-        client = OllamaClient()
+        from app.llm import get_llm_client
+        client = get_llm_client()
         if client.is_available():
             models = client.list_models()
-            return f"🟢 Ollama онлайн — {len(models)} моделей"
-        return "🔴 Ollama недоступна"
+            backend = config.llm_backend
+            return f"🟢 {backend} онлайн — {len(models)} моделей"
+        return f"🔴 {config.llm_backend} недоступна"
     except Exception:
-        return "🔴 Ollama недоступна"
+        return f"🔴 {config.llm_backend} недоступна"
 
 
 def _refresh_models():
     """Повертає оновлений Dropdown з моделями."""
     try:
-        from app.llm.ollama_client import OllamaClient
-        client = OllamaClient()
+        from app.llm import get_llm_client
+        client = get_llm_client()
         models = client.list_models()
-        models = models if models else [config.ollama.model]
+        if not models:
+            models = [client.model]
     except Exception:
         models = [config.ollama.model]
-    current = config.ollama.model
+    current = models[0] if models else config.ollama.model
+    if _agent and _agent.llm.model in models:
+        current = _agent.llm.model
     status = _check_ollama_status()
     return gr.update(choices=models, value=current), status
 
@@ -712,8 +716,18 @@ def _build_scheduler_tab():
 
 def create_interface() -> gr.Blocks:
     """Створити Gradio інтерфейс — 5 вкладок, без auto-load."""
+    # Визначаємо бекенд та модель для заголовка
+    backend = config.llm_backend
+    if backend == "llamacpp":
+        model_label = Path(config.llamacpp.model_path).stem
+    else:
+        model_label = config.ollama.model
+
     with gr.Blocks(title="🤖 AI Агент") as demo:
-        gr.Markdown("# 🤖 AI Агент — Локальний помічник\nOllama · RAG · Скіли · Інструменти · Планувальник")
+        gr.Markdown(
+            f"# ⬡ Aegis · LLM: {backend} ({model_label})\n"
+            f"RAG · Скіли · Інструменти · Планувальник"
+        )
 
         with gr.Tabs():
             with gr.Tab("💬 Чат"):

@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass, field
 
 from app.config import config
-from app.llm.ollama_client import OllamaClient
+from app.llm import get_llm_client
 from app.llm.prompts import (
     MAIN_SYSTEM_PROMPT,
     RAG_QUERY_TEMPLATE,
@@ -96,7 +96,7 @@ class Agent:
     def __init__(self):
         """Инициализация всех подсистем."""
         # LLM
-        self.llm = OllamaClient()
+        self.llm = get_llm_client()
 
         # RAG
         self.retriever = Retriever()

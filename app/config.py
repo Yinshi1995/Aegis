@@ -43,6 +43,16 @@ class OllamaConfig:
 
 
 @dataclass
+class LlamaCppConfig:
+    """Настройки llama-cpp-python."""
+    model_path: str = field(default_factory=lambda: _env("LLAMACPP_MODEL_PATH", "./models/qwen2.5-7b-instruct-q4_k_m.gguf"))
+    embed_model_path: str = field(default_factory=lambda: _env("LLAMACPP_EMBED_MODEL_PATH", "./models/nomic-embed-text-v1.5.Q8_0.gguf"))
+    n_gpu_layers: int = field(default_factory=lambda: _env_int("LLAMACPP_N_GPU_LAYERS", -1))
+    n_ctx: int = field(default_factory=lambda: _env_int("LLAMACPP_N_CTX", 8192))
+    chat_format: str = field(default_factory=lambda: _env("LLAMACPP_CHAT_FORMAT", "chatml"))
+
+
+@dataclass
 class RAGConfig:
     """Настройки RAG пайплайна."""
     chunk_size: int = field(default_factory=lambda: _env_int("RAG_CHUNK_SIZE", 600))
@@ -51,6 +61,14 @@ class RAGConfig:
     relevance_threshold: float = field(default_factory=lambda: _env_float("RAG_RELEVANCE_THRESHOLD", 0.3))
     collection_name: str = field(default_factory=lambda: _env("RAG_COLLECTION_NAME", "knowledge_base"))
     persist_directory: str = field(default_factory=lambda: _env("RAG_PERSIST_DIR", "./data/chroma_db"))
+
+
+@dataclass
+class DatabaseConfig:
+    """Настройки базы данных."""
+    db_type: str = field(default_factory=lambda: _env("DATABASE_TYPE", "sqlite"))  # sqlite | postgres
+    database_url: str = field(default_factory=lambda: _env("DATABASE_URL", "") or _env("POSTGRES_URL", ""))
+    vector_store_type: str = field(default_factory=lambda: _env("VECTOR_STORE_TYPE", "chroma"))  # chroma | pgvector
 
 
 @dataclass
@@ -75,9 +93,12 @@ class AppConfig:
     gui_host: str = field(default_factory=lambda: _env("GUI_HOST", "0.0.0.0"))
     gui_port: int = field(default_factory=lambda: _env_int("PORT", 0) or _env_int("GUI_PORT", 7860))
     debug: bool = field(default_factory=lambda: _env_bool("DEBUG", True))
+    llm_backend: str = field(default_factory=lambda: _env("LLM_BACKEND", "ollama"))  # ollama | llamacpp
 
     ollama: OllamaConfig = field(default_factory=OllamaConfig)
+    llamacpp: LlamaCppConfig = field(default_factory=LlamaCppConfig)
     rag: RAGConfig = field(default_factory=RAGConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
     skills: SkillsConfig = field(default_factory=SkillsConfig)
     tools: ToolsConfig = field(default_factory=ToolsConfig)
 

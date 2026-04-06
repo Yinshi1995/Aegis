@@ -12,13 +12,22 @@ langchain>=0.2.0
 langchain-community>=0.2.0
 langchain-core>=0.2.0
 
+# LLM — llama-cpp-python (альтернативный бэкенд, опционально)
+# GPU: CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
+# CPU: pip install llama-cpp-python
+llama-cpp-python>=0.2.0
+
 # RAG
 chromadb>=0.4.24
 sentence-transformers>=2.5.0
 pymupdf>=1.24.0
 
-# Embeddings (если не через Ollama)
-# huggingface-hub>=0.20.0
+# PostgreSQL + pgvector (для деплоя, опционально)
+psycopg2-binary>=2.9.9
+pgvector>=0.3.0
+
+# HuggingFace Hub — скачивание GGUF моделей
+huggingface-hub>=0.20.0
 
 # Tools
 playwright>=1.42.0

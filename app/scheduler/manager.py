@@ -48,7 +48,13 @@ class TaskManager:
 
     def __init__(self, db_path: str | None = None):
         db_path = db_path or config.skills.db_path
-        self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
+        if config.database.db_type == "postgres" and config.database.database_url:
+            self.engine = create_engine(
+                config.database.database_url, echo=False,
+                pool_pre_ping=True, pool_size=5, max_overflow=10,
+            )
+        else:
+            self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine, expire_on_commit=False)
         self._ensure_presets()

@@ -37,18 +37,30 @@ def main():
     logger.info("=" * 60)
 
     # ------------------------------------------------------------------
-    # 1. Перевірка Ollama
+    # 0. Ініціалізація бази даних (створення таблиць)
     # ------------------------------------------------------------------
-    from app.llm.ollama_client import OllamaClient
-    client = OllamaClient()
+    try:
+        from app.db.database import init_db
+        init_db()
+    except Exception as e:
+        logger.error("Помилка ініціалізації БД: %s", e)
+
+    # ------------------------------------------------------------------
+    # 1. Перевірка LLM-бекенду
+    # ------------------------------------------------------------------
+    from app.llm import get_llm_client
+    from app.config import config as app_config
+
+    client = get_llm_client()
+    backend_name = app_config.llm_backend
     if client.is_available():
         models = client.list_models()
-        logger.info("Ollama доступна. Моделі: %s", ", ".join(models))
+        logger.info("%s доступна. Моделі: %s", backend_name, ", ".join(models))
     else:
         logger.warning(
-            "⚠️  Ollama НЕДОСТУПНА на %s. "
+            "⚠️  %s НЕДОСТУПНА. "
             "Чат не працюватиме, але GUI відкриється.",
-            client.base_url,
+            backend_name,
         )
 
     # ------------------------------------------------------------------

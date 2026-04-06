@@ -16,8 +16,6 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-0D1117?style=flat-square&logo=ollama&logoColor=white)](https://ollama.com)
 [![Gradio](https://img.shields.io/badge/Gradio-GUI-0D1117?style=flat-square&logo=gradio&logoColor=F97316)](https://gradio.app)
 [![ChromaDB](https://img.shields.io/badge/Chroma-Vector_DB-0D1117?style=flat-square&logoColor=4A154B)](https://trychroma.com)
-[![License](https://img.shields.io/badge/MIT-License-0D1117?style=flat-square)](LICENSE)
-&nbsp;&nbsp;
 ![Offline](https://img.shields.io/badge/100%25_OFFLINE-22C55E?style=flat-square)
 
 <br>
@@ -605,6 +603,6 @@ python -m tests.test_stage5_5    # Scheduler
 ⬡ AEGIS — your knowledge, your hardware, your control.
 ```
 
-<sub>MIT License · Built with Ollama, ChromaDB, Gradio & ☕</sub>
+<sub>Built with Ollama, ChromaDB, Gradio & ☕</sub>
 
 </div>

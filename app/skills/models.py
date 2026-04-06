@@ -44,7 +44,14 @@ class SkillManager:
     """CRUD операции над скиллами."""
 
     def __init__(self, db_path: str = "./data/agent.db"):
-        self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
+        from app.config import config as _cfg
+        if _cfg.database.db_type == "postgres" and _cfg.database.database_url:
+            self.engine = create_engine(
+                _cfg.database.database_url, echo=False,
+                pool_pre_ping=True, pool_size=5, max_overflow=10,
+            )
+        else:
+            self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
 

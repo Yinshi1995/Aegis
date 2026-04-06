@@ -7,11 +7,12 @@ import logging
 from typing import Generator
 
 from app.config import config
+from app.llm.base_client import BaseLLMClient
 
 logger = logging.getLogger(__name__)
 
 
-class OllamaClient:
+class OllamaClient(BaseLLMClient):
     """Клиент Ollama — общение с локальной LLM."""
 
     def __init__(
