@@ -1,5 +1,5 @@
 """
-Генерация эмбеддингов через LLM-бэкенд (Ollama или llama-cpp-python).
+Генерация эмбеддингов через LLM-бэкенд (Ollama).
 Обёртка над BaseLLMClient.embed / embed_batch.
 """
 import logging

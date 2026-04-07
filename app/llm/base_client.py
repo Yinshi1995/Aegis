@@ -1,6 +1,6 @@
 """
 Абстрактный базовый класс для LLM-клиентов.
-OllamaClient и LlamaCppClient наследуют этот интерфейс.
+OllamaClient наследует этот интерфейс.
 """
 from abc import ABC, abstractmethod
 from typing import Generator

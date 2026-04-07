@@ -1,8 +1,7 @@
 # ============================================================
 # ProjectAegis — Docker Compose (dev / deploy)
 # ============================================================
-# llamacpp (дефолт): docker compose up -d --build
-# С Ollama:          docker compose --profile ollama up -d
+# docker compose up -d --build
 # ============================================================
 
 services:
@@ -24,10 +23,9 @@ services:
       timeout: 3s
       retries: 5
 
-  # --- Ollama LLM (опционально, профиль: ollama) ---
+  # --- Ollama LLM ---
   ollama:
     image: ollama/ollama:latest
-    profiles: ["ollama"]
     restart: unless-stopped
     ports:
       - "11434:11434"
@@ -41,12 +39,9 @@ services:
     ports:
       - "7860:7860"
     environment:
-      LLM_BACKEND: llamacpp
-      LLAMACPP_MODEL_PATH: ./models/qwen2.5-7b-instruct-q4_k_m.gguf
-      LLAMACPP_EMBED_MODEL_PATH: ./models/nomic-embed-text-v1.5.Q8_0.gguf
-      LLAMACPP_N_GPU_LAYERS: "0"
-      LLAMACPP_N_CTX: "4096"
-      LLAMACPP_CHAT_FORMAT: chatml
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: qwen2.5:7b
+      OLLAMA_EMBEDDING_MODEL: nomic-embed-text
       DATABASE_TYPE: postgres
       DATABASE_URL: postgresql://aegis:aegis_secret@postgres:5432/aegis
       VECTOR_STORE_TYPE: pgvector
@@ -55,6 +50,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      ollama:
+        condition: service_started
 
 volumes:
   pgdata:
